@@ -54,6 +54,9 @@ class SleepTrackerFragment : Fragment() {
         val binding: FragmentSleepTrackerBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_sleep_tracker, container, false)
 
+        val adapter = SleepNightAdapter()
+        binding.sleepList.adapter = adapter
+
         val application = requireNotNull(this.activity).application
 
         // Create an instance of the ViewModel Factory.
@@ -64,6 +67,12 @@ class SleepTrackerFragment : Fragment() {
         val sleepTrackerViewModel =
                 ViewModelProvider(
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
+
+        sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.data = it
+            }
+        })
 
         // To use the View Model with data binding, you have to explicitly
         // give the binding object a reference to it.
